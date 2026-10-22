@@ -115,7 +115,7 @@ export const RFMSegmentationView: React.FC = () => {
     setIsRecalculating(false);
   };
 
-  const segmentColors = ['#10b981', '#3b82f6', '#06b6d4', '#8b5cf6', '#f59e0b', '#f97316', '#ef4444', '#a855f7', '#64748b', '#e11d48'];
+  const segmentColors = ['#12a957', '#2e58bc', '#0d944b', '#5b80d6', '#f59e0b', '#f97316', '#ef4444', '#8eaae6', '#64748b', '#e11d48'];
 
   return (
     <div className="p-6 space-y-6 max-w-7xl mx-auto">
@@ -414,7 +414,7 @@ export const RFMSegmentationView: React.FC = () => {
                 <Tooltip 
                   contentStyle={{ backgroundColor: '#0f172a', borderRadius: '10px', color: '#fff', fontSize: '11px', border: 'none' }}
                 />
-                <Bar dataKey="clientes" fill="#6366f1" radius={[4, 4, 0, 0]}>
+                <Bar dataKey="clientes" fill="#153f9d" radius={[4, 4, 0, 0]}>
                   {chartData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={segmentColors[index % segmentColors.length]} />
                   ))}

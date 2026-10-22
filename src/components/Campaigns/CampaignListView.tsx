@@ -485,17 +485,17 @@ export const CampaignListView: React.FC = () => {
                       className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs outline-none bg-white"
                     >
                       <option value="all">Toda a Base ({customers.length})</option>
-                      <option value="CAMPEÕES">👑 Campeões</option>
+                      <option value="CAMPEÕES">Campeões</option>
                       <option value="LEAIS">⭐ Leais</option>
-                      <option value="POTENCIAIS LEAIS">💎 Potenciais Leais</option>
-                      <option value="PROMISSORES">🚀 Promissores</option>
-                      <option value="NOVOS">🌱 Novos</option>
-                      <option value="PRECISAM DE ATENÇÃO">⚠️ Precisam de Atenção</option>
-                      <option value="EM RISCO">🚨 Em Risco (31-60d)</option>
-                      <option value="PRESTES A DORMIR">💤 Prestes a Dormir</option>
-                      <option value="HIBERNANDO">❄️ Hibernando</option>
-                      <option value="PERDIDOS">❌ Perdidos</option>
-                      <option value="UNCLASSIFIED">⚪ Não Classificados</option>
+                      <option value="POTENCIAIS LEAIS">Potenciais Leais</option>
+                      <option value="PROMISSORES">Promissores</option>
+                      <option value="NOVOS">Novos</option>
+                      <option value="PRECISAM DE ATENÇÃO">Precisam de Atenção</option>
+                      <option value="EM RISCO">Em Risco (31-60d)</option>
+                      <option value="PRESTES A DORMIR">Prestes a Dormir</option>
+                      <option value="HIBERNANDO">Hibernando</option>
+                      <option value="PERDIDOS">Perdidos</option>
+                      <option value="UNCLASSIFIED">Não Classificados</option>
                     </select>
                   </div>
                 </div>

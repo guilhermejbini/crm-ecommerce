@@ -754,17 +754,17 @@ export const CustomerMapView: React.FC = () => {
             className="px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-medium bg-white text-slate-700 focus:ring-2 focus:ring-emerald-500"
           >
             <option value="all">Todos os Segmentos RFM</option>
-            <option value="CAMPEÕES">👑 Campeões</option>
-            <option value="LEAIS">💎 Leais</option>
-            <option value="POTENCIAIS LEAIS">🌟 Potenciais Leais</option>
-            <option value="PROMISSORES">🚀 Promissores</option>
-            <option value="NOVOS">🌱 Novos</option>
-            <option value="PRECISAM DE ATENÇÃO">⚠️ Precisam de Atenção</option>
-            <option value="EM RISCO">⚠️ Em Risco</option>
-            <option value="PRESTES A DORMIR">💤 Prestes a Dormir</option>
-            <option value="HIBERNANDO">❄️ Hibernando</option>
-            <option value="PERDIDOS">🛑 Perdidos</option>
-            <option value="UNCLASSIFIED">⚪ Não Classificados</option>
+            <option value="CAMPEÕES">Campeões</option>
+            <option value="LEAIS">Leais</option>
+            <option value="POTENCIAIS LEAIS">Potenciais Leais</option>
+            <option value="PROMISSORES">Promissores</option>
+            <option value="NOVOS">Novos</option>
+            <option value="PRECISAM DE ATENÇÃO">Precisam de Atenção</option>
+            <option value="EM RISCO">Em Risco</option>
+            <option value="PRESTES A DORMIR">Prestes a Dormir</option>
+            <option value="HIBERNANDO">Hibernando</option>
+            <option value="PERDIDOS">Perdidos</option>
+            <option value="UNCLASSIFIED">Não Classificados</option>
           </select>
 
           {/* Toggle More Filters */}
@@ -1033,8 +1033,8 @@ export const CustomerMapView: React.FC = () => {
               <thead>
                 <tr className="bg-slate-50/80 border-b border-slate-200 text-slate-500 font-bold uppercase tracking-wider">
                   <th className="py-3.5 px-4">Bairro / Região</th>
-                  <th className="py-3.5 px-4 text-center">🟢 Clientes Ativos</th>
-                  <th className="py-3.5 px-4 text-center">🔴 Clientes Perdidos</th>
+                  <th className="py-3.5 px-4 text-center">Clientes Ativos</th>
+                  <th className="py-3.5 px-4 text-center">Clientes Perdidos</th>
                   <th className="py-3.5 px-4 text-center">Total de Clientes</th>
                   <th className="py-3.5 px-4 text-center">% Clientes Perdidos</th>
                   <th className="py-3.5 px-4 text-right">Valor em Risco</th>

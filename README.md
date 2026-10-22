@@ -42,6 +42,21 @@ Aplicação React + Express + Firebase/Firestore + Gemini para CRM e inteligênc
 - Clientes sem histórico válido ficam como `UNCLASSIFIED`.
 - Os limites (thresholds) ainda estão pendentes de calibração com dados reais (`RFM_THRESHOLDS_PENDING_CALIBRATION`).
 
+## Loja online (loja.superastral.com.br)
+
+A loja online (`loja-super-astral`) grava os pedidos no mesmo Firestore, na coleção `shop_orders`, pelo servidor dela.
+O CRM só lê essa coleção, na tela **Pedidos Online** (gestor e administrador):
+
+- Cada cliente do checkout vira cliente do CRM com origem `Loja Online` e etiqueta `loja-online`.
+  Com CPF válido, usa o mesmo cadastro do PDV/Flex daquele CPF. Sem CPF, o celular identifica o cliente da loja online.
+- Cadastro que já existe só recebe campos vazios (e-mail, WhatsApp, endereço). Nada já cadastrado é sobrescrito.
+- O aceite do checkout é só para avisos do pedido: nenhum consentimento de marketing é marcado e o cliente não entra no Clube.
+- Cada pedido **concluído** vira uma compra (`online_<código>`, PDV "Loja Online") e entra no RFM e no Cliente 360.
+  Rodar de novo não duplica nada.
+- Status, separação e aviso ao cliente continuam no painel da loja (`/admin` da loja), não no CRM.
+
+Para a tela funcionar, publique `firestore.rules` (inclui leitura de `shop_orders` para gestor/administrador; a gravação continua só pelo servidor da loja).
+
 ## Integrações futuras
 
 WhatsApp e RP Flex devem ser integrados no backend, nunca expondo tokens ou credenciais no frontend.

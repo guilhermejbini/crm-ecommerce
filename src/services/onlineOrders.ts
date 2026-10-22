@@ -251,6 +251,8 @@ export function planOnlineOrdersSync(orders: ShopOrder[], existingCustomers: Cus
         favoriteStoreId: trimmed(order.storeId) || undefined,
         favoriteStoreName: getStoreLabel(trimmed(order.storeId)) || undefined,
         tags: [ONLINE_TAG],
+        // Comprar na loja online não inscreve no Clube Astral (a inscrição é a ficha do site)
+        isClubMember: false,
         ...emptyMetrics()
       };
       for (const [k, v] of Object.entries(contact)) {

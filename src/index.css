@@ -1,29 +1,128 @@
 @import "tailwindcss";
 
+/* Identidade Super Astral (mesma do site e da loja online): Manrope, azul-marinho, azul, amarelo e verde.
+   As escalas abaixo substituem as cores padrão do Tailwind usadas nas telas do CRM:
+   emerald/indigo/violet/purple -> azul Astral, teal -> verde Astral, slate -> neutros azulados. */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url('/fonts/manrope-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url('/fonts/manrope-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@theme {
+  --font-sans: 'Manrope', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  --color-astral-navy: #061847;
+  --color-astral-blue: #153f9d;
+  --color-astral-yellow: #ffd41f;
+  --color-astral-green: #12a957;
+
+  --color-emerald-50: #eef3fc;
+  --color-emerald-100: #dbe5f8;
+  --color-emerald-200: #bccdf1;
+  --color-emerald-300: #8eaae6;
+  --color-emerald-400: #5b80d6;
+  --color-emerald-500: #2e58bc;
+  --color-emerald-600: #153f9d;
+  --color-emerald-700: #0d3387;
+  --color-emerald-800: #0b2a6e;
+  --color-emerald-900: #08215a;
+  --color-emerald-950: #061847;
+
+  --color-indigo-50: #eef3fc;
+  --color-indigo-100: #dbe5f8;
+  --color-indigo-200: #bccdf1;
+  --color-indigo-300: #8eaae6;
+  --color-indigo-400: #5b80d6;
+  --color-indigo-500: #2e58bc;
+  --color-indigo-600: #153f9d;
+  --color-indigo-700: #0d3387;
+  --color-indigo-800: #0b2a6e;
+  --color-indigo-900: #08215a;
+  --color-indigo-950: #061847;
+
+  --color-violet-50: #eef3fc;
+  --color-violet-100: #dbe5f8;
+  --color-violet-200: #bccdf1;
+  --color-violet-300: #8eaae6;
+  --color-violet-400: #5b80d6;
+  --color-violet-500: #2e58bc;
+  --color-violet-600: #153f9d;
+  --color-violet-700: #0d3387;
+  --color-violet-800: #0b2a6e;
+  --color-violet-900: #08215a;
+
+  --color-purple-50: #eef3fc;
+  --color-purple-100: #dbe5f8;
+  --color-purple-200: #bccdf1;
+  --color-purple-300: #8eaae6;
+  --color-purple-400: #5b80d6;
+  --color-purple-500: #2e58bc;
+  --color-purple-600: #153f9d;
+  --color-purple-700: #0d3387;
+  --color-purple-800: #0b2a6e;
+  --color-purple-900: #08215a;
+
+  --color-teal-50: #e2f6ea;
+  --color-teal-100: #c6edd6;
+  --color-teal-200: #9ddfba;
+  --color-teal-300: #6ccd98;
+  --color-teal-400: #3bba76;
+  --color-teal-500: #12a957;
+  --color-teal-600: #0d944b;
+  --color-teal-700: #0b7a3e;
+  --color-teal-800: #0a6033;
+  --color-teal-900: #084d2a;
+
+  --color-slate-50: #f7f8fb;
+  --color-slate-100: #eef1f7;
+  --color-slate-200: #dbe3f3;
+  --color-slate-300: #c9d3ea;
+  --color-slate-400: #8f9bb8;
+  --color-slate-500: #5f6c8c;
+  --color-slate-600: #47536f;
+  --color-slate-700: #323d59;
+  --color-slate-800: #17234a;
+  --color-slate-900: #0a1c4f;
+  --color-slate-950: #061847;
+}
+
 @layer base {
   body {
     @apply bg-slate-50 text-slate-900 antialiased font-sans;
   }
 }
 
+@layer components {
 /* Bento Grid Theme Styling */
 .bento-card {
   background-color: #ffffff;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #dbe3f3;
   border-radius: 1rem;
   padding: 1.25rem;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
+  box-shadow: 0 1px 2px 0 rgba(6, 24, 71, 0.05);
 }
 
 .bento-card:hover {
-  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.06);
-  border-color: #cbd5e1;
+  box-shadow: 0 6px 18px -6px rgba(6, 24, 71, 0.12);
+  border-color: #c9d3ea;
 }
 
 .bento-card-compact {
   background-color: #ffffff;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #dbe3f3;
   border-radius: 0.875rem;
   padding: 1rem;
   transition: all 0.2s ease;
@@ -31,13 +130,13 @@
 }
 
 .bento-card-compact:hover {
-  border-color: #cbd5e1;
+  border-color: #c9d3ea;
   box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.05);
 }
 
 .metric-label {
   font-size: 0.75rem;
-  color: #64748b;
+  color: #5f6c8c;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.035em;
@@ -46,7 +145,7 @@
 .metric-value {
   font-size: 1.625rem;
   font-weight: 800;
-  color: #0f172a;
+  color: #071844;
   letter-spacing: -0.02em;
 }
 
@@ -82,6 +181,7 @@
   background-color: #fee2e2;
   color: #991b1b;
   border: 1px solid #fecaca;
+}
 }
 
 /* Custom modern scrollbar */

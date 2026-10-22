@@ -226,18 +226,18 @@ export const AICampaignModal: React.FC<AICampaignModalProps> = ({ isOpen, onClos
                 onChange={e => setTargetSegment(e.target.value)}
                 className="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl outline-none"
               >
-                <option value="all">🌐 Todos os Clientes</option>
-                <option value="CAMPEÕES">🏆 Campeões</option>
-                <option value="LEAIS">🤝 Clientes Leais</option>
-                <option value="POTENCIAIS LEAIS">💎 Potenciais Leais</option>
-                <option value="PROMISSORES">🚀 Promissores</option>
-                <option value="NOVOS">🌱 Novos Clientes</option>
-                <option value="PRECISAM DE ATENÇÃO">⚠️ Precisam de Atenção</option>
-                <option value="EM RISCO">🚨 Em Risco</option>
-                <option value="PRESTES A DORMIR">💤 Prestes a Dormir</option>
-                <option value="HIBERNANDO">❄️ Hibernando</option>
-                <option value="PERDIDOS">📉 Perdidos / Inativos</option>
-                <option value="UNCLASSIFIED">⚪ Não Classificados</option>
+                <option value="all">Todos os Clientes</option>
+                <option value="CAMPEÕES">Campeões</option>
+                <option value="LEAIS">Clientes Leais</option>
+                <option value="POTENCIAIS LEAIS">Potenciais Leais</option>
+                <option value="PROMISSORES">Promissores</option>
+                <option value="NOVOS">Novos Clientes</option>
+                <option value="PRECISAM DE ATENÇÃO">Precisam de Atenção</option>
+                <option value="EM RISCO">Em Risco</option>
+                <option value="PRESTES A DORMIR">Prestes a Dormir</option>
+                <option value="HIBERNANDO">Hibernando</option>
+                <option value="PERDIDOS">Perdidos / Inativos</option>
+                <option value="UNCLASSIFIED">Não Classificados</option>
               </select>
             </div>
 

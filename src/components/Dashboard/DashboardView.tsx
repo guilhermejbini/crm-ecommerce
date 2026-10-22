@@ -19,7 +19,10 @@ import {
   Send,
   Zap,
   Calendar,
-  Building2
+  Building2,
+  Trophy,
+  HeartHandshake,
+  TrendingDown
 } from 'lucide-react';
 import { 
   ResponsiveContainer, 
@@ -169,8 +172,8 @@ export const DashboardView: React.FC = () => {
   const rfmPieData = useMemo(() => {
     const { champions, loyal, atRisk, lost, others } = currentMetrics.rfmCounts;
     return [
-      { name: 'Campeões', value: champions, color: '#10b981' },
-      { name: 'Leais', value: loyal, color: '#3b82f6' },
+      { name: 'Campeões', value: champions, color: '#12a957' },
+      { name: 'Leais', value: loyal, color: '#2e58bc' },
       { name: 'Em Risco', value: atRisk, color: '#f59e0b' },
       { name: 'Perdidos', value: lost, color: '#ef4444' },
       { name: 'Outros', value: others, color: '#94a3b8' }
@@ -193,18 +196,17 @@ export const DashboardView: React.FC = () => {
   return (
     <div className="p-6 space-y-6 max-w-7xl mx-auto">
       {/* Top Bento Header Banner */}
-      <div className="bento-card bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white p-6 relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-4 border-slate-800">
-        <div className="absolute right-0 top-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="bento-card bg-astral-navy text-white p-6 relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-4 border-astral-navy">
+        <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-astral-yellow pointer-events-none"></div>
         <div className="relative z-10">
-          <div className="flex items-center gap-2 text-indigo-400 text-xs font-bold uppercase tracking-wider mb-1">
-            <Sparkles className="w-3.5 h-3.5" />
-            Painel Executivo de CRM • Super Astral
+          <div className="flex items-center gap-2 text-astral-yellow text-xs font-bold uppercase tracking-wider mb-1">
+            Painel executivo · Super Astral
           </div>
           <h2 className="text-2xl font-black tracking-tight text-white">
-            Visão Geral & Desempenho do Cliente
+            Visão geral dos clientes
           </h2>
           <p className="text-slate-300 text-xs mt-1 max-w-xl">
-            Gestão estratégica de relacionamento, segmentação RFM automatizada e inteligência comercial acionável.
+            Relacionamento, segmentação RFM e oportunidades comerciais das três lojas e da loja online.
           </p>
         </div>
 
@@ -228,7 +230,7 @@ export const DashboardView: React.FC = () => {
 
           <button
             onClick={() => setIsAICampaignModalOpen(true)}
-            className="flex items-center gap-1.5 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs shadow-md shadow-indigo-600/20 transition-all"
+            className="flex items-center gap-1.5 px-4 py-2.5 bg-astral-yellow hover:bg-[#ffe05b] text-astral-navy font-bold rounded-xl text-xs transition-all"
           >
             <Sparkles className="w-4 h-4" />
             Gerar Campanha com IA
@@ -390,7 +392,7 @@ export const DashboardView: React.FC = () => {
             onClick={() => setCurrentView('rfm')}
             className="p-4 bg-emerald-50/70 hover:bg-emerald-50 rounded-xl border border-emerald-200/80 transition-all cursor-pointer group text-center"
           >
-            <div className="text-2xl mb-1">🏆</div>
+            <Trophy className="w-6 h-6 mx-auto mb-1.5 text-green-700" />
             <p className="text-xs font-bold text-emerald-800">Campeões</p>
             <p className="text-2xl font-black text-emerald-950 my-0.5">{currentMetrics.rfmCounts.champions}</p>
             <p className="text-[10px] text-emerald-600 font-medium">
@@ -403,7 +405,7 @@ export const DashboardView: React.FC = () => {
             onClick={() => setCurrentView('rfm')}
             className="p-4 bg-blue-50/70 hover:bg-blue-50 rounded-xl border border-blue-200/80 transition-all cursor-pointer group text-center"
           >
-            <div className="text-2xl mb-1">🤝</div>
+            <HeartHandshake className="w-6 h-6 mx-auto mb-1.5 text-emerald-700" />
             <p className="text-xs font-bold text-blue-800">Leais</p>
             <p className="text-2xl font-black text-blue-950 my-0.5">{currentMetrics.rfmCounts.loyal}</p>
             <p className="text-[10px] text-blue-600 font-medium">
@@ -416,7 +418,7 @@ export const DashboardView: React.FC = () => {
             onClick={() => setCurrentView('rfm')}
             className="p-4 bg-amber-50/70 hover:bg-amber-50 rounded-xl border border-amber-200/80 transition-all cursor-pointer group text-center"
           >
-            <div className="text-2xl mb-1">⚠️</div>
+            <AlertTriangle className="w-6 h-6 mx-auto mb-1.5 text-amber-600" />
             <p className="text-xs font-bold text-amber-800">Em Risco</p>
             <p className="text-2xl font-black text-amber-950 my-0.5">{currentMetrics.rfmCounts.atRisk}</p>
             <p className="text-[10px] text-amber-600 font-medium">
@@ -429,7 +431,7 @@ export const DashboardView: React.FC = () => {
             onClick={() => setCurrentView('rfm')}
             className="p-4 bg-rose-50/70 hover:bg-rose-50 rounded-xl border border-rose-200/80 transition-all cursor-pointer group text-center"
           >
-            <div className="text-2xl mb-1">📉</div>
+            <TrendingDown className="w-6 h-6 mx-auto mb-1.5 text-rose-600" />
             <p className="text-xs font-bold text-rose-800">Perdidos</p>
             <p className="text-2xl font-black text-rose-950 my-0.5">{currentMetrics.rfmCounts.lost}</p>
             <p className="text-[10px] text-rose-600 font-medium">
@@ -459,8 +461,8 @@ export const DashboardView: React.FC = () => {
               <AreaChart data={revenueChartData}>
                 <defs>
                   <linearGradient id="revenueGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#6366f1" stopOpacity={0.35}/>
-                    <stop offset="95%" stopColor="#6366f1" stopOpacity={0.0}/>
+                    <stop offset="5%" stopColor="#153f9d" stopOpacity={0.35}/>
+                    <stop offset="95%" stopColor="#153f9d" stopOpacity={0.0}/>
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
@@ -470,7 +472,7 @@ export const DashboardView: React.FC = () => {
                   formatter={(val: any) => [`R$ ${Number(val).toLocaleString('pt-BR')}`, 'Faturamento']}
                   contentStyle={{ backgroundColor: '#0f172a', borderRadius: '10px', color: '#fff', fontSize: '11px', border: 'none' }}
                 />
-                <Area type="monotone" dataKey="faturamento" stroke="#6366f1" strokeWidth={2.5} fillOpacity={1} fill="url(#revenueGrad)" />
+                <Area type="monotone" dataKey="faturamento" stroke="#153f9d" strokeWidth={2.5} fillOpacity={1} fill="url(#revenueGrad)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -498,8 +500,8 @@ export const DashboardView: React.FC = () => {
                 <Tooltip 
                   contentStyle={{ backgroundColor: '#0f172a', borderRadius: '10px', color: '#fff', fontSize: '11px', border: 'none' }}
                 />
-                <Bar dataKey="total" name="Total Acumulado" fill="#6366f1" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="novos" name="Novos no Mês" fill="#10b981" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="total" name="Total Acumulado" fill="#153f9d" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="novos" name="Novos no Mês" fill="#12a957" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>

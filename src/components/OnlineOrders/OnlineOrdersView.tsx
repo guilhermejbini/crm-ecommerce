@@ -18,7 +18,7 @@ const STATUS_STYLE: Record<ShopOrderStatus, string> = {
   separando: 'bg-amber-50 text-amber-800 border-amber-200',
   pronto_retirada: 'bg-teal-50 text-teal-800 border-teal-200',
   saiu_entrega: 'bg-teal-50 text-teal-800 border-teal-200',
-  concluido: 'bg-emerald-50 text-emerald-800 border-emerald-200',
+  concluido: 'bg-green-50 text-green-800 border-green-200',
   cancelado: 'bg-rose-50 text-rose-700 border-rose-200'
 };
 
@@ -235,7 +235,7 @@ export const OnlineOrdersView: React.FC = () => {
                       <td className="py-2.5 pr-3 text-slate-600">
                         <span className="inline-flex items-center gap-1">
                           {o.mode === 'entrega' ? <Truck className="w-3.5 h-3.5" /> : <StoreIcon className="w-3.5 h-3.5" />}
-                          {o.mode === 'entrega' ? 'Entrega' : 'Retirada'} · {getStoreLabel(o.storeId) || o.storeId}
+                          {o.mode === 'entrega' ? 'Entrega' : 'Retirada'} · {(getStoreLabel(o.storeId) || o.storeId).split(' - ')[0]}
                         </span>
                       </td>
                       <td className="py-2.5 pr-3">

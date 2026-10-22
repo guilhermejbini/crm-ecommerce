@@ -410,7 +410,7 @@ export const Customer360View: React.FC = () => {
 
   const rfmDetails = getRFMSegmentDetails(customer.rfmSegment);
 
-  const categoryChartColors = ['#10b981', '#3b82f6', '#f59e0b', '#ec4899', '#8b5cf6', '#06b6d4', '#64748b'];
+  const categoryChartColors = ['#12a957', '#2e58bc', '#f59e0b', '#ffd41f', '#5b80d6', '#0d944b', '#64748b'];
 
   return (
     <div className="p-6 space-y-6 max-w-7xl mx-auto">
@@ -896,7 +896,7 @@ export const Customer360View: React.FC = () => {
                   <XAxis type="number" tick={{ fontSize: 10, fill: '#64748b' }} tickFormatter={v => `R$${v}`} />
                   <YAxis dataKey="category" type="category" tick={{ fontSize: 11, fill: '#64748b' }} width={80} />
                   <Tooltip formatter={(val: any) => [`R$ ${Number(val).toFixed(2)}`, 'Gasto']} />
-                  <Bar dataKey="totalRevenue" fill="#10b981" radius={[0, 4, 4, 0]} />
+                  <Bar dataKey="totalRevenue" fill="#12a957" radius={[0, 4, 4, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>

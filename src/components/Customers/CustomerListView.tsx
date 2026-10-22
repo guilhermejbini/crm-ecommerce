@@ -231,17 +231,17 @@ export const CustomerListView: React.FC = () => {
               className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 font-medium focus:bg-white focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none cursor-pointer"
             >
               <option value="all">Todos os Segmentos RFM</option>
-              <option value="CAMPEÕES">👑 Campeões</option>
+              <option value="CAMPEÕES">Campeões</option>
               <option value="LEAIS">⭐ Leais</option>
-              <option value="POTENCIAIS LEAIS">💎 Potenciais Leais</option>
-              <option value="PROMISSORES">🚀 Promissores</option>
-              <option value="NOVOS">🌱 Novos</option>
-              <option value="PRECISAM DE ATENÇÃO">⚠️ Precisam de Atenção</option>
-              <option value="EM RISCO">🚨 Em Risco (31-60d)</option>
-              <option value="PRESTES A DORMIR">💤 Prestes a Dormir</option>
-              <option value="HIBERNANDO">❄️ Hibernando</option>
-              <option value="PERDIDOS">❌ Perdidos (&gt;90d)</option>
-              <option value="UNCLASSIFIED">⚪ Não Classificados</option>
+              <option value="POTENCIAIS LEAIS">Potenciais Leais</option>
+              <option value="PROMISSORES">Promissores</option>
+              <option value="NOVOS">Novos</option>
+              <option value="PRECISAM DE ATENÇÃO">Precisam de Atenção</option>
+              <option value="EM RISCO">Em Risco (31-60d)</option>
+              <option value="PRESTES A DORMIR">Prestes a Dormir</option>
+              <option value="HIBERNANDO">Hibernando</option>
+              <option value="PERDIDOS">Perdidos (&gt;90d)</option>
+              <option value="UNCLASSIFIED">Não Classificados</option>
             </select>
           </div>
 
@@ -253,8 +253,8 @@ export const CustomerListView: React.FC = () => {
               className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 font-medium focus:bg-white focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none cursor-pointer"
             >
               <option value="all">Opt-in WhatsApp (Todos)</option>
-              <option value="whatsapp_yes">✓ Com Opt-in Autorizado</option>
-              <option value="whatsapp_no">✕ Sem Opt-in de Marketing</option>
+              <option value="whatsapp_yes">Com Opt-in Autorizado</option>
+              <option value="whatsapp_no">Sem Opt-in de Marketing</option>
             </select>
           </div>
         </div>
