@@ -1443,7 +1443,9 @@ export async function importPurchasesBatch(
     const cleanStore = (p.storeId || 'sem-loja').replace(/[^a-zA-Z0-9_-]/g, '');
     const cleanReceipt = (p.couponReceiptNumber || '').replace(/[^a-zA-Z0-9_-]/g, '');
     // Sem ID do importador e sem número de cupom não há identificador estável (nunca usar a posição na lista)
-    if (!(p.id && p.id.startsWith('pdv_')) && !cleanReceipt) {
+    // IDs estáveis aceitos: pdv_ (importador do PDV) e online_ (pedidos da loja online)
+    const hasStableId = !!p.id && (p.id.startsWith('pdv_') || p.id.startsWith('online_'));
+    if (!hasStableId && !cleanReceipt) {
       ignoredCount++;
       errorsList.push({
         rowNumber: i + 1,
@@ -1455,7 +1457,7 @@ export async function importPurchasesBatch(
     validCount++;
     itemsCount += p.items ? p.items.length : (p.itemsCount || 1);
     const cleanDate = p.purchaseDate ? p.purchaseDate.slice(0, 10).replace(/[^0-9]/g, '') : 'nodate';
-    const deterministicId = p.id && p.id.startsWith('pdv_') ? p.id : `pdv_${cleanStore}_${cleanReceipt}_${cleanDate}`;
+    const deterministicId = hasStableId ? p.id : `pdv_${cleanStore}_${cleanReceipt}_${cleanDate}`;
     p.id = deterministicId;
 
     // Sem número de cupom a deduplicação é feita só pelo ID (evita chave genérica loja+data)

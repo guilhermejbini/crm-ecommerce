@@ -131,6 +131,16 @@ service cloud.firestore {
     }
 
     // ----------------------------------------------------
+    // 3b. PEDIDOS DA LOJA ONLINE (/shop_orders)
+    // Gravados só pelo servidor da loja (conta de serviço, fora destas regras).
+    // O CRM apenas lê, para transformar pedidos em clientes e compras.
+    // ----------------------------------------------------
+    match /shop_orders/{orderId} {
+      allow read: if isManager();
+      allow write: if false;
+    }
+
+    // ----------------------------------------------------
     // 4. ITENS DE COMPRA (/purchase_items)
     // ----------------------------------------------------
     match /purchase_items/{itemId} {
