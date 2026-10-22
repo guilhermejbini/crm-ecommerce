@@ -1,0 +1,6 @@
+{
+  "name": "CRM Super Astral Supermercados",
+  "description": "Sistema de CRM inteligente para Super Astral Supermercados com gestão de clientes 360, segmentação RFM, histórico de compras PDV, fidelidade, campanhas, cupons, atendimento LGPD e inteligência artificial Gemini.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,87 @@
+{
+  "entities": {
+    "AuthorizedUser": {
+      "title": "AuthorizedUser",
+      "description": "Controle de usuários previamente autorizados pelo administrador para acesso ao CRM Super Astral",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Identificador do registro (UID do Firebase ou e-mail normalizado)"
+        },
+        "uid": {
+          "type": "string",
+          "description": "UID do Firebase Authentication quando vinculado"
+        },
+        "email": {
+          "type": "string",
+          "description": "E-mail Google do usuário autorizado"
+        },
+        "name": {
+          "type": "string",
+          "description": "Nome completo ou corporativo do usuário"
+        },
+        "role": {
+          "type": "string",
+          "enum": ["admin", "manager", "viewer"],
+          "description": "Perfil de acesso (admin: Administrador, manager: Gestor, viewer: Consulta)"
+        },
+        "active": {
+          "type": "boolean",
+          "description": "Status de ativação da autorização (true para ativo, false para revogado/bloqueado)"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Data de inclusão da autorização"
+        },
+        "createdBy": {
+          "type": "string",
+          "description": "E-mail do administrador que concedeu o acesso"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Data da última alteração de status ou perfil"
+        },
+        "lastLoginAt": {
+          "type": "string",
+          "description": "Data do último acesso confirmado ao CRM"
+        }
+      },
+      "required": ["email", "name", "role", "active"]
+    },
+    "Customer": {
+      "title": "Customer",
+      "description": "Cadastro 360 de clientes do Super Astral",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "ID único do cliente"
+        },
+        "name": {
+          "type": "string",
+          "description": "Nome completo do cliente"
+        },
+        "cpf": {
+          "type": "string",
+          "description": "CPF do cliente"
+        },
+        "email": {
+          "type": "string",
+          "description": "E-mail de contato"
+        }
+      },
+      "required": ["id", "name"]
+    }
+  },
+  "firestore": {
+    "/authorized_users/{userKey}": {
+      "schema": "AuthorizedUser",
+      "description": "Controle de usuários autorizados a acessar o CRM"
+    },
+    "/customers/{customerId}": {
+      "schema": "Customer",
+      "description": "Clientes comerciais e dados cadastrais 360"
+    }
+  }
+}

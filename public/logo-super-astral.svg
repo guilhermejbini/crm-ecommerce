@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!-- Piece 1: Top & Upper Left -->
+  <polygon fill="#FFFFFF" points="396,108 539,108 665,428 534,479 481,317 404,522 231,579"/>
+  <!-- Piece 2: Bottom-Left Foot -->
+  <polygon fill="#FFFFFF" points="204,645 346,595 274,903 133,903 112,875"/>
+  <!-- Piece 3: Lower-Right & Center Arrow -->
+  <polygon fill="#FFFFFF" points="665,903 811,903 831,875 691,491 560,542 397,757 634,757"/>
+</svg>

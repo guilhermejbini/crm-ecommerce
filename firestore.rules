@@ -1,0 +1,255 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ----------------------------------------------------
+    // FUNÇÕES DE SEGURANÇA E CONTROLE DE ACESSO (RBAC)
+    // ----------------------------------------------------
+
+    // 1. Verifica se a requisição possui autenticação Firebase válida
+    function signedIn() {
+      return request.auth != null && request.auth.uid != null;
+    }
+
+    // 2. Verifica se o token contém e-mail válido e verificado
+    function hasEmail() {
+      return signedIn() && 
+        'email' in request.auth.token && 
+        request.auth.token.email != null && 
+        request.auth.token.email != '' &&
+        request.auth.token.email_verified == true;
+    }
+
+    // 3. Administrador Raiz Seguro (Bootstrap explícito autorizado somente com e-mail verificado)
+    function isRootAdmin() {
+      return hasEmail() && request.auth.token.email in [
+        'guilhermejbini@gmail.com',
+        'admin@superastral.com.br'
+      ];
+    }
+
+    // 4. Referências aos documentos de autorização (Prioridade estrita: Registro Canônico por E-mail)
+    function authDocByEmail() {
+      return /databases/$(database)/documents/authorized_users/$(request.auth.token.email);
+    }
+
+    function authDocByUid() {
+      return /databases/$(database)/documents/authorized_users/$(request.auth.uid);
+    }
+
+    function hasAuthRecord() {
+      return (hasEmail() && exists(authDocByEmail())) || exists(authDocByUid());
+    }
+
+    function getAuthData() {
+      return (hasEmail() && exists(authDocByEmail())) ? get(authDocByEmail()).data : get(authDocByUid()).data;
+    }
+
+    // 5. Regra fundamental: Usuário DEVE ser autenticado e ter autorização prévia ativa
+    function isAuthorizedUser() {
+      return signedIn() && hasEmail() && (
+        isRootAdmin() ||
+        (hasAuthRecord() && getAuthData().active == true)
+      );
+    }
+
+    // 6. Obtenção do perfil funcional seguro
+    function getUserRole() {
+      return isRootAdmin() ? 'admin' :
+        (hasAuthRecord() ? getAuthData().role : '');
+    }
+
+    // 7. ADMIN: Acesso irrestrito e administração de usuários
+    function isAdmin() {
+      return isAuthorizedUser() && (isRootAdmin() || getUserRole() == 'admin');
+    }
+
+    // 8. GESTOR: Operação comercial do CRM
+    function isManager() {
+      return isAuthorizedUser() && (isAdmin() || getUserRole() == 'manager' || getUserRole() == 'gestor');
+    }
+
+    // ----------------------------------------------------
+    // 0. FONTE ÚNICA DE VERDADE: USUÁRIOS AUTORIZADOS (/authorized_users)
+    // ----------------------------------------------------
+    match /authorized_users/{userKey} {
+      // Leitura: Administrador pode listar todos. Colaborador só lê seu próprio registro de autorização.
+      allow read: if signedIn() && hasEmail() && (
+        isAdmin() ||
+        userKey == request.auth.uid ||
+        userKey == request.auth.token.email ||
+        (resource != null && (
+          resource.data.uid == request.auth.uid || 
+          resource.data.email == request.auth.token.email
+        ))
+      );
+
+      // Criação e Exclusão: EXCLUSIVO para Administradores
+      allow create, delete: if isAdmin();
+
+      // Atualização: Administrador completo OU o próprio usuário vinculando seu UID no primeiro acesso
+      // (É estritamente proibido auto-promoção de role ou auto-reativação de active)
+      allow update: if isAdmin() || (
+        signedIn() && hasEmail() &&
+        (userKey == request.auth.uid || userKey == request.auth.token.email) &&
+        request.resource.data.role == resource.data.role &&
+        request.resource.data.active == resource.data.active &&
+        request.resource.data.email == resource.data.email
+      );
+    }
+
+    // ----------------------------------------------------
+    // 1. USUÁRIOS E PERFIS COMPLEMENTARES (/users)
+    // ----------------------------------------------------
+    match /users/{userId} {
+      allow read: if isAuthorizedUser();
+      allow create, update: if isAuthorizedUser() && (request.auth.uid == userId || isAdmin());
+      allow delete: if isAdmin();
+    }
+
+    // ----------------------------------------------------
+    // 2. CLIENTES E CADASTRO 360 (/customers)
+    // ----------------------------------------------------
+    match /customers/{customerId} {
+      allow read: if isAuthorizedUser();
+      allow create: if isManager();
+      // Anonimização LGPD (isAnonymized passa a true) é irreversível: exclusiva do administrador
+      allow update: if isManager() && (
+        isAdmin() ||
+        request.resource.data.get('isAnonymized', false) == resource.data.get('isAnonymized', false)
+      );
+      allow delete: if isAdmin();
+    }
+
+    // ----------------------------------------------------
+    // 3. COMPRAS E VENDAS PDV (/purchases)
+    // ----------------------------------------------------
+    match /purchases/{purchaseId} {
+      allow read: if isAuthorizedUser();
+      allow create, update: if isManager();
+      allow delete: if isAdmin();
+    }
+
+    // ----------------------------------------------------
+    // 4. ITENS DE COMPRA (/purchase_items)
+    // ----------------------------------------------------
+    match /purchase_items/{itemId} {
+      allow read: if isAuthorizedUser();
+      allow create, update: if isManager();
+      allow delete: if isAdmin();
+    }
+
+    // ----------------------------------------------------
+    // 5. CAMPANHAS DE MARKETING (/campaigns)
+    // ----------------------------------------------------
+    match /campaigns/{campaignId} {
+      allow read: if isAuthorizedUser();
+      allow create, update: if isManager();
+      allow delete: if isAdmin();
+    }
+
+    // ----------------------------------------------------
+    // 6. CUPONS DE DESCONTO (/coupons)
+    // ----------------------------------------------------
+    match /coupons/{couponId} {
+      allow read: if isAuthorizedUser();
+      allow create, update: if isManager();
+      allow delete: if isAdmin();
+    }
+
+    // ----------------------------------------------------
+    // 7. OFERTAS DO CLUBE DE BENEFÍCIOS (/club_offers)
+    // ----------------------------------------------------
+    match /club_offers/{offerId} {
+      allow read: if isAuthorizedUser();
+      allow create, update: if isManager();
+      allow delete: if isAdmin();
+    }
+
+    // ----------------------------------------------------
+    // 8. USOS DE OFERTAS DO CLUBE (/club_offer_usages)
+    // ----------------------------------------------------
+    match /club_offer_usages/{usageId} {
+      allow read: if isAuthorizedUser();
+      allow create, update: if isManager();
+      allow delete: if isAdmin();
+    }
+
+    // ----------------------------------------------------
+    // 9. INTERAÇÕES E ATENDIMENTO SAC (/interactions)
+    // ----------------------------------------------------
+    match /interactions/{interactionId} {
+      allow read: if isAuthorizedUser();
+      allow create, update: if isManager();
+      allow delete: if isAdmin();
+    }
+
+    // ----------------------------------------------------
+    // 10. TAREFAS CRM E PIPELINE (/tasks)
+    // ----------------------------------------------------
+    match /tasks/{taskId} {
+      allow read: if isAuthorizedUser();
+      allow create, update: if isManager();
+      allow delete: if isAdmin();
+    }
+
+    // ----------------------------------------------------
+    // 11. SEGMENTOS DE CLIENTES (/segments)
+    // ----------------------------------------------------
+    match /segments/{segmentId} {
+      allow read: if isAuthorizedUser();
+      allow create, update: if isManager();
+      allow delete: if isAdmin();
+    }
+
+    // ----------------------------------------------------
+    // 12. UNIDADES E LOJAS (/stores)
+    // ----------------------------------------------------
+    match /stores/{storeId} {
+      allow read: if isAuthorizedUser();
+      allow write: if isAdmin();
+    }
+
+    // ----------------------------------------------------
+    // 13. CONFIGURAÇÕES DO SISTEMA (/settings)
+    // ----------------------------------------------------
+    match /settings/{settingId} {
+      allow read: if isAuthorizedUser();
+      allow write: if isAdmin();
+    }
+
+    // ----------------------------------------------------
+    // 14. TRILHA DE AUDITORIA LGPD (/audit_logs)
+    // ----------------------------------------------------
+    match /audit_logs/{logId} {
+      allow read: if isAuthorizedUser();
+      allow create: if isAuthorizedUser();
+      allow update, delete: if false; // Imutável
+    }
+
+    // ----------------------------------------------------
+    // 15. RESUMOS ANALÍTICOS (rfm, dashboard_metrics, geo_summaries)
+    // ----------------------------------------------------
+    match /rfm/{docId} {
+      allow read: if isAuthorizedUser();
+      allow write: if isManager();
+    }
+
+    match /dashboard_metrics/{docId} {
+      allow read: if isAuthorizedUser();
+      allow write: if isManager();
+    }
+
+    match /geo_summaries/{docId} {
+      allow read: if isAuthorizedUser();
+      allow write: if isManager();
+    }
+
+    // ----------------------------------------------------
+    // BLOQUEIO TOTAL PADRÃO PARA QUALQUER OUTRO CAMINHO
+    // ----------------------------------------------------
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
