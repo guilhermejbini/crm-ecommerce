@@ -84,6 +84,7 @@ export type AppView =
   | 'customers' 
   | 'customer360' 
   | 'purchases' 
+  | 'onlineOrders'
   | 'map'
   | 'rfm' 
   | 'segments' 

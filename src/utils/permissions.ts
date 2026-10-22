@@ -5,7 +5,7 @@
 export type CRMRole = 'admin' | 'manager' | 'viewer';
 
 /** Telas que o perfil Consulta (viewer) não acessa. */
-const VIEWER_BLOCKED_VIEWS = new Set(['lgpd', 'settings']);
+const VIEWER_BLOCKED_VIEWS = new Set(['lgpd', 'settings', 'onlineOrders']);
 
 export function canAccessView(role: string | undefined, view: string): boolean {
   if (role === 'viewer') return !VIEWER_BLOCKED_VIEWS.has(view);

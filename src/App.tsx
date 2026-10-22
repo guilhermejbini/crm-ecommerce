@@ -6,6 +6,7 @@ import { DashboardView } from './components/Dashboard/DashboardView';
 import { CustomerListView } from './components/Customers/CustomerListView';
 import { Customer360View } from './components/Customers/Customer360View';
 import { PurchaseListView } from './components/Purchases/PurchaseListView';
+import { OnlineOrdersView } from './components/OnlineOrders/OnlineOrdersView';
 import { RFMSegmentationView } from './components/RFM/RFMSegmentationView';
 import { NBAView } from './components/NBA/NBAView';
 import { CampaignListView } from './components/Campaigns/CampaignListView';
@@ -107,6 +108,8 @@ const MainLayout: React.FC = () => {
         return <Customer360View />;
       case 'purchases':
         return <PurchaseListView />;
+      case 'onlineOrders':
+        return <OnlineOrdersView />;
       case 'map':
         return <CustomerMapView />;
       case 'rfm':

@@ -17,7 +17,8 @@ import {
   UploadCloud,
   Database,
   FileSpreadsheet,
-  RefreshCw
+  RefreshCw,
+  Globe
 } from 'lucide-react';
 import { useCRM, AppView } from '../../context/CRMContext';
 import { canAccessView, canImport } from '../../utils/permissions';
@@ -52,6 +53,7 @@ export const Sidebar: React.FC = () => {
     { id: 'customers', label: 'Clientes', icon: Users, badge: customers.length },
     { id: 'map', label: 'Mapa de Clientes', icon: MapPin },
     { id: 'purchases', label: 'Compras & PDV', icon: ShoppingCart },
+    { id: 'onlineOrders', label: 'Pedidos Online', icon: Globe },
     { id: 'segments', label: 'Segmentação', icon: Filter },
     { id: 'loyalty', label: 'Fidelidade Clube', icon: Award },
     { id: 'campaigns', label: 'Campanhas', icon: Megaphone },
