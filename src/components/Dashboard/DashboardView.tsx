@@ -206,7 +206,7 @@ export const DashboardView: React.FC = () => {
             Visão geral dos clientes
           </h2>
           <p className="text-slate-300 text-xs mt-1 max-w-xl">
-            Relacionamento, segmentação RFM e oportunidades comerciais das três lojas e da loja online.
+            Relacionamento, segmentação RFM e oportunidades comerciais das três lojas.
           </p>
         </div>
 
