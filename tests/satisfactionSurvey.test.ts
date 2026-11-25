@@ -305,11 +305,36 @@ describe('respostas pelo webhook', () => {
     expect(texts).toHaveLength(1);
   });
 
+  it('detalhe depois de 24h não é guardado', async () => {
+    const { store, sender, surveys } = await sentSurvey();
+    await handleIncomingMessage(store, sender, { from: '5541987654321', payload: 'NOTA_5' }, later);
+    const twoDays = new Date(later.getTime() + 2 * 86400000);
+    expect(await handleIncomingMessage(store, sender, { from: '5541987654321', text: 'oi' }, twoDays)).toBe('ignored');
+    expect(surveys.get('p1')?.comment).toBeUndefined();
+  });
+
   it('comentário depois da nota fica guardado, sem resposta automática', async () => {
     const { store, sender, surveys, texts } = await sentSurvey();
     await handleIncomingMessage(store, sender, { from: '554187654321', payload: 'NOTA_1' }, later);
     expect(await handleIncomingMessage(store, sender, { from: '554187654321', text: 'Faltou pão francês' }, later)).toBe('comment');
     expect(surveys.get('p1')).toMatchObject({ rating: 1, comment: 'Faltou pão francês' });
+    expect(texts).toHaveLength(1);
+  });
+
+  it('agradecimento convida a escrever um detalhe, para nota boa e ruim', async () => {
+    const { thankYouText } = await import('../src/services/satisfactionSurveyRules');
+    expect(thankYouText(5)).toMatch(/escreva aqui algum detalhe/);
+    expect(thankYouText(1)).toMatch(/escreva aqui o que aconteceu/);
+    expect(thankYouText(5)).toMatch(/Não precisa responder/);
+  });
+
+  it('detalhe depois de "Gostei" também fica guardado', async () => {
+    const { store, sender, surveys, texts } = await sentSurvey();
+    await handleIncomingMessage(store, sender, { from: '5541987654321', contextId: 'wamid.1', payload: 'NOTA_5' }, later);
+    expect(texts[0].text).toMatch(/algum detalhe/);
+    await handleIncomingMessage(store, sender, { from: '5541987654321', text: 'A moça do açougue foi muito atenciosa' }, later);
+    await handleIncomingMessage(store, sender, { from: '5541987654321', text: 'e o pão estava quentinho' }, later);
+    expect(surveys.get('p1')).toMatchObject({ rating: 5, comment: 'A moça do açougue foi muito atenciosa\ne o pão estava quentinho' });
     expect(texts).toHaveLength(1);
   });
 

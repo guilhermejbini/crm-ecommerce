@@ -356,10 +356,13 @@ export function parseSurveyReply(input: { payload?: string; text?: string }): Su
   return { kind: 'comment', text: raw.slice(0, 1000) };
 }
 
-/** Resposta curta depois da nota. Só uma mensagem, para não incomodar. */
+/** Resposta curta depois da nota: agradece e convida (sem insistir) a contar algum detalhe.
+ *  É a única mensagem depois da nota, para não incomodar. */
 export function thankYouText(rating: number): string {
-  if (rating >= 4) return 'Que bom! Obrigado pela sua avaliação. Esperamos você de novo no Super Astral.';
-  return 'Obrigado por avisar. Se quiser, conte em uma mensagem o que podemos melhorar. Sua resposta vai direto para a gerência da loja.';
+  if (rating >= 4) {
+    return 'Que bom! Obrigado pela sua avaliação.\n\nSe quiser, escreva aqui algum detalhe da sua compra (o que gostou, um produto, um atendente). Não precisa responder.';
+  }
+  return 'Obrigado por avisar.\n\nSe quiser, escreva aqui o que aconteceu ou o que podemos melhorar. Sua mensagem vai direto para a gerência da loja. Não precisa responder.';
 }
 
 export const OPT_OUT_CONFIRMATION = 'Pronto. Você não vai mais receber esta pesquisa do Super Astral.';

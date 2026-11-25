@@ -191,6 +191,7 @@ export interface IncomingMessage {
 
 const ANSWER_WINDOW_MS = 3 * 86400000;
 const COMMENT_WINDOW_MS = 24 * 3600000;
+const COMMENT_MAX_CHARS = 2000;
 
 export async function handleIncomingMessage(
   store: SurveyStore, sender: SurveySender, msg: IncomingMessage, now = new Date()
@@ -224,11 +225,14 @@ export async function handleIncomingMessage(
     return 'rating';
   }
 
-  // Comentário: guarda um só, sem responder (para não virar conversa automática).
-  if (survey.comment) return 'ignored';
+  // Detalhe opcional: guarda sem responder (para não virar conversa automática).
+  // Quem escreve em várias mensagens seguidas tem tudo juntado, até 24h depois da nota.
   const ref = survey.answeredAt || survey.sentAt;
   if (ref && now.getTime() - new Date(ref).getTime() > COMMENT_WINDOW_MS) return 'ignored';
-  await store.updateSurvey(survey.id, { comment: reply.text, commentAt: now.toISOString() });
+  const previous = survey.comment || '';
+  if (previous.length >= COMMENT_MAX_CHARS) return 'ignored';
+  const comment = (previous ? `${previous}\n${reply.text}` : reply.text).slice(0, COMMENT_MAX_CHARS);
+  await store.updateSurvey(survey.id, { comment, commentAt: now.toISOString() });
   return 'comment';
 }
 

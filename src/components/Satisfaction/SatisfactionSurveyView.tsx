@@ -11,6 +11,7 @@ import {
   SURVEY_STATUS_DOC,
   SURVEY_TEMPLATE_PREVIEW,
   SURVEY_BUTTONS,
+  thankYouText,
   SKIP_REASON_LABELS,
   SURVEY_STATUS_LABELS,
   SatisfactionSurveyRecord,
@@ -31,7 +32,7 @@ const brl = (v: number) => v.toLocaleString('pt-BR', { style: 'currency', curren
 const dateTime = (iso?: string) => (iso ? new Date(iso).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '');
 const isManagerRole = (r?: string) => r === 'admin' || r === 'manager' || r === 'gestor';
 
-type Filter = 'all' | 'sent' | 'answered' | 'skipped' | 'simulated' | 'failed';
+type Filter = 'all' | 'sent' | 'answered' | 'comment' | 'skipped' | 'simulated' | 'failed';
 
 const RUN_STATUS_TEXT: Record<string, string> = {
   ok: 'concluído',
@@ -109,6 +110,7 @@ export const SatisfactionSurveyView: React.FC = () => {
       rate: sent.length ? Math.round((answered.length / sent.length) * 100) : 0,
       avg,
       low: low.length,
+      comments: sent.filter(s => !!s.comment).length,
       simulated: surveys.filter(s => s.status === 'simulated').length,
       stores: [...byStore.values()].sort((a, b) => b.sent - a.sent),
       attention
@@ -118,6 +120,7 @@ export const SatisfactionSurveyView: React.FC = () => {
   const filtered = useMemo(() => surveys.filter(s => {
     if (filter === 'all') return true;
     if (filter === 'answered') return typeof s.rating === 'number';
+    if (filter === 'comment') return !!s.comment;
     return s.status === filter;
   }).slice(0, 300), [surveys, filter]);
 
@@ -246,7 +249,7 @@ export const SatisfactionSurveyView: React.FC = () => {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
           { label: 'Enviadas (30 dias)', value: String(stats.sent), hint: stats.simulated ? `${stats.simulated} em modo teste` : '' },
-          { label: 'Responderam', value: `${stats.answered}`, hint: `${stats.rate}% das enviadas` },
+          { label: 'Responderam', value: `${stats.answered}`, hint: `${stats.rate}% das enviadas · ${stats.comments} com comentário` },
           { label: 'Nota média', value: stats.answered ? stats.avg.toFixed(1).replace('.', ',') : '–', hint: 'de 1 a 5' },
           { label: 'Notas baixas', value: String(stats.low), hint: 'nota 1 ou 2' }
         ].map(k => (
@@ -274,7 +277,7 @@ export const SatisfactionSurveyView: React.FC = () => {
                     <span className="text-xs font-bold text-red-700">{ratingLabel(s.rating)}</span>
                   </div>
                   <div className="text-xs text-slate-500">{s.storeName} · {brl(s.amount)} · {dateTime(s.answeredAt)}</div>
-                  {s.comment && <p className="mt-1 text-slate-700">“{s.comment}”</p>}
+                  {s.comment && <p className="mt-1 text-slate-700 whitespace-pre-line">“{s.comment}”</p>}
                 </li>
               ))}
             </ul>
@@ -307,7 +310,7 @@ export const SatisfactionSurveyView: React.FC = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
           <h3 className="text-sm font-bold text-slate-800">Histórico (30 dias)</h3>
           <div className="flex flex-wrap gap-1.5">
-            {([['all', 'Todas'], ['sent', 'Enviadas'], ['answered', 'Responderam'], ['skipped', 'Não enviadas'], ['simulated', 'Modo teste'], ['failed', 'Falhas']] as [Filter, string][]).map(([id, label]) => (
+            {([['all', 'Todas'], ['sent', 'Enviadas'], ['answered', 'Responderam'], ['comment', 'Com comentário'], ['skipped', 'Não enviadas'], ['simulated', 'Modo teste'], ['failed', 'Falhas']] as [Filter, string][]).map(([id, label]) => (
               <button key={id} onClick={() => setFilter(id)}
                 className={`px-2.5 py-1 rounded-full text-xs font-semibold border ${filter === id ? 'bg-astral-navy text-white border-astral-navy' : 'bg-white text-slate-600 border-slate-300'}`}>
                 {label}
@@ -338,7 +341,7 @@ export const SatisfactionSurveyView: React.FC = () => {
                   <td className="whitespace-nowrap">{brl(s.amount || 0)}</td>
                   <td className="text-xs">{statusText(s)}</td>
                   <td className="whitespace-nowrap text-xs font-bold">{ratingLabel(s.rating)}</td>
-                  <td className="text-xs text-slate-600 max-w-xs">{s.comment}</td>
+                  <td className="text-xs text-slate-600 max-w-xs whitespace-pre-line">{s.comment}</td>
                   {canRun && (
                     <td>
                       {s.customerId && !s.optedOut && (
@@ -423,8 +426,10 @@ export const SatisfactionSurveyView: React.FC = () => {
               <div key={b.payload} className="text-center text-sm font-semibold text-sky-700 bg-white border border-slate-200 rounded-lg py-1.5">{b.text}</div>
             ))}
           </div>
+          <div className="text-xs text-slate-500">Depois que o cliente toca em "Gostei", recebe:</div>
+          <div className="rounded-xl bg-[#e7f7dc] p-3 text-sm text-slate-800 whitespace-pre-line">{thankYouText(5)}</div>
           <p className="text-xs text-slate-500">
-            Depois da nota, o cliente recebe só um agradecimento. Quem responde PARAR não recebe mais.
+            O que ele escrever em seguida aparece aqui na tela, junto da nota (coluna Comentário). Não há outra mensagem depois disso. Quem responde PARAR não recebe mais.
           </p>
           {serverStatus && (
             <ul className="text-xs text-slate-600 space-y-1 pt-2 border-t border-slate-100">
