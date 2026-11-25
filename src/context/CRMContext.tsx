@@ -91,6 +91,7 @@ export type AppView =
   | 'campaigns' 
   | 'coupons' 
   | 'support' 
+  | 'satisfaction'
   | 'opportunities' 
   | 'nba'
   | 'ai'

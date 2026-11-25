@@ -3,6 +3,17 @@ import path from 'path';
 import fs from 'fs';
 import dotenv from 'dotenv';
 import { GoogleGenAI } from '@google/genai';
+import crypto from 'crypto';
+import { runSurveyCycle, handleIncomingMessage, handleStatusUpdate, CycleSummary } from './src/services/satisfactionSurveyEngine';
+import {
+  getAdminDb,
+  createFirestoreSurveyStore,
+  createWhatsAppSender,
+  readWhatsAppConfig,
+  isValidMetaSignature,
+  parseWebhookBody
+} from './src/services/satisfactionSurveyServer';
+import { SURVEY_STATUS_DOC } from './src/services/satisfactionSurveyRules';
 
 dotenv.config();
 
@@ -39,7 +50,11 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(express.json({ limit: MAX_AI_BODY }));
+// Guarda o corpo bruto para conferir a assinatura do webhook do WhatsApp.
+app.use(express.json({
+  limit: MAX_AI_BODY,
+  verify: (req, _res, buf) => { (req as any).rawBody = buf; }
+}));
 
 // -----------------------------
 // Firebase Authentication & Authorization for server-side API protection
@@ -628,6 +643,113 @@ app.post('/api/geocode/batch', requireAuth, rateLimit(20), async (req: Authentic
   }
 });
 
+
+// -----------------------------
+// Pesquisa de satisfação pós-compra (WhatsApp)
+// -----------------------------
+// Envio automático: Cloud Scheduler chama POST /api/survey/run com o cabeçalho
+// X-Survey-Cron-Token (= SURVEY_CRON_TOKEN), por exemplo a cada 15 minutos.
+// O servidor também tenta rodar sozinho a cada 15 min enquanto estiver ligado.
+// Sem WHATSAPP_TOKEN/WHATSAPP_PHONE_NUMBER_ID, roda em modo teste (registra, não envia).
+
+function getSurveyDeps() {
+  const { projectId, firestoreDatabaseId } = getFirebaseConfig();
+  if (!projectId) throw new Error('FIREBASE_PROJECT_ID não configurado.');
+  const db = getAdminDb(projectId, firestoreDatabaseId);
+  return { db, store: createFirestoreSurveyStore(db), sender: createWhatsAppSender(readWhatsAppConfig()) };
+}
+
+let surveyCycleRunning = false;
+async function runSurveyCycleSafely(trigger: string): Promise<CycleSummary | { status: 'erro'; error: string }> {
+  if (surveyCycleRunning) return { status: 'erro', error: 'Já existe um envio em andamento.' };
+  surveyCycleRunning = true;
+  try {
+    const { db, store, sender } = getSurveyDeps();
+    const summary = await runSurveyCycle(store, sender);
+    await db.collection('settings').doc(SURVEY_STATUS_DOC).set({ lastRun: { ...summary, trigger } }, { merge: true });
+    if (summary.checked > 0) {
+      console.log(`[Pesquisa] ${trigger}: ${summary.sent} enviadas, ${summary.simulated} em modo teste, ${summary.skipped} não enviadas, ${summary.failed} falhas.`);
+    }
+    return summary;
+  } catch (err) {
+    const error = err instanceof Error ? err.message : String(err);
+    console.error('[Pesquisa] Erro no ciclo de envio:', error);
+    return { status: 'erro', error };
+  } finally {
+    surveyCycleRunning = false;
+  }
+}
+
+function hasValidCronToken(req: Request): boolean {
+  const expected = (process.env.SURVEY_CRON_TOKEN || '').trim();
+  const given = String(req.headers['x-survey-cron-token'] || '');
+  if (!expected || !given) return false;
+  const a = crypto.createHash('sha256').update(expected).digest();
+  const b = crypto.createHash('sha256').update(given).digest();
+  return crypto.timingSafeEqual(a, b);
+}
+
+const MANAGER_ROLES = new Set(['admin', 'manager', 'gestor']);
+
+app.post('/api/survey/run', async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  if (hasValidCronToken(req)) {
+    const result = await runSurveyCycleSafely('agendado');
+    return res.status(result.status === 'erro' ? 500 : 200).json(result);
+  }
+  next();
+}, requireAuth, rateLimit(6), async (req: AuthenticatedRequest, res: Response) => {
+  if (!MANAGER_ROLES.has(req.authUser?.role || '')) {
+    return res.status(403).json({ error: 'Só gestor ou administrador pode rodar o envio.' });
+  }
+  const result = await runSurveyCycleSafely(`manual (${req.authUser?.email || req.authUser?.uid})`);
+  return res.status(result.status === 'erro' ? 500 : 200).json(result);
+});
+
+app.get('/api/survey/status', requireAuth, rateLimit(30), async (req: AuthenticatedRequest, res: Response) => {
+  let databaseAccess = false;
+  let databaseError = '';
+  try {
+    const { db } = getSurveyDeps();
+    await db.collection('settings').doc(SURVEY_STATUS_DOC).get();
+    databaseAccess = true;
+  } catch (err) {
+    databaseError = err instanceof Error ? err.message.slice(0, 200) : 'Sem acesso ao banco.';
+  }
+  return res.json({
+    whatsappConfigured: !!readWhatsAppConfig(),
+    webhookConfigured: !!(process.env.WHATSAPP_VERIFY_TOKEN && process.env.WHATSAPP_APP_SECRET),
+    schedulerTokenConfigured: !!(process.env.SURVEY_CRON_TOKEN || '').trim(),
+    databaseAccess,
+    databaseError
+  });
+});
+
+// Webhook do WhatsApp: verificação (GET) e eventos (POST). Público, protegido pela assinatura da Meta.
+app.get('/api/whatsapp/webhook', (req, res) => {
+  const verifyToken = process.env.WHATSAPP_VERIFY_TOKEN || '';
+  if (verifyToken && req.query['hub.mode'] === 'subscribe' && req.query['hub.verify_token'] === verifyToken) {
+    return res.status(200).send(String(req.query['hub.challenge'] || ''));
+  }
+  return res.sendStatus(403);
+});
+
+app.post('/api/whatsapp/webhook', async (req: Request, res: Response) => {
+  const appSecret = process.env.WHATSAPP_APP_SECRET || '';
+  if (!isValidMetaSignature((req as any).rawBody, req.headers['x-hub-signature-256'] as string | undefined, appSecret)) {
+    return res.sendStatus(401);
+  }
+  // A Meta reenvia se não receber 200 rápido: responde já e processa em seguida.
+  res.sendStatus(200);
+  try {
+    const { store, sender } = getSurveyDeps();
+    const { messages, statuses } = parseWebhookBody(req.body);
+    for (const m of messages) await handleIncomingMessage(store, sender, m);
+    for (const s of statuses) await handleStatusUpdate(store, s.id, s.status, s.error);
+  } catch (err) {
+    console.error('[Pesquisa] Erro ao processar webhook do WhatsApp:', err instanceof Error ? err.message : err);
+  }
+});
+
 async function startServer() {
   const distPath = path.resolve(process.cwd(), 'dist');
   const indexHtmlPath = path.join(distPath, 'index.html');
@@ -666,6 +788,11 @@ async function startServer() {
     console.log(`[CRM Super Astral] Servidor pronto e escutando em http://${HOST}:${PORT}`);
     console.log(`[CRM Super Astral] Ambiente: ${process.env.NODE_ENV || 'development'} | PID: ${process.pid}`);
   });
+
+  if (process.env.SURVEY_INTERNAL_TIMER !== 'off' && process.env.NODE_ENV !== 'test') {
+    const timer = setInterval(() => { void runSurveyCycleSafely('timer interno'); }, 15 * 60 * 1000);
+    timer.unref();
+  }
 
   server.on('error', (err: any) => {
     console.error('[CRM Super Astral] Erro fatal no servidor HTTP:', err);

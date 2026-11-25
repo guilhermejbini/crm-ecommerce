@@ -246,6 +246,28 @@ service cloud.firestore {
     }
 
     // ----------------------------------------------------
+    // 16. PESQUISA DE SATISFAÇÃO PÓS-COMPRA (WhatsApp)
+    // Envio e respostas são gravados só pelo servidor (conta de serviço).
+    // A equipe lê; gestor pode marcar manualmente quem não quer receber.
+    // ----------------------------------------------------
+    match /satisfaction_surveys/{surveyId} {
+      allow read: if isAuthorizedUser();
+      allow write: if false;
+    }
+
+    match /survey_contacts/{customerId} {
+      allow read: if isAuthorizedUser();
+      allow create, update: if isManager();
+      allow delete: if isAdmin();
+    }
+
+    match /survey_optouts/{phone} {
+      allow read: if isAuthorizedUser();
+      allow create, update: if isManager();
+      allow delete: if isAdmin();
+    }
+
+    // ----------------------------------------------------
     // BLOQUEIO TOTAL PADRÃO PARA QUALQUER OUTRO CAMINHO
     // ----------------------------------------------------
     match /{document=**} {
