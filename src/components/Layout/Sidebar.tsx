@@ -17,7 +17,8 @@ import {
   UploadCloud,
   Database,
   FileSpreadsheet,
-  RefreshCw
+  RefreshCw,
+  MessageSquareHeart
 } from 'lucide-react';
 import { useCRM, AppView } from '../../context/CRMContext';
 import { canAccessView, canImport } from '../../utils/permissions';
@@ -57,6 +58,7 @@ export const Sidebar: React.FC = () => {
     { id: 'campaigns', label: 'Campanhas', icon: Megaphone },
     { id: 'coupons', label: 'Cupons', icon: Ticket },
     { id: 'support', label: 'Atendimento & SAC', icon: Headphones, badge: openTasksCount > 0 ? openTasksCount : undefined },
+    { id: 'satisfaction', label: 'Pesquisa de satisfação', icon: MessageSquareHeart },
     { id: 'opportunities', label: 'Oportunidades NBA', icon: Sparkles },
     { id: 'lgpd', label: 'Auditoria & LGPD', icon: ShieldCheck },
     { id: 'settings', label: 'Configurações', icon: Settings }

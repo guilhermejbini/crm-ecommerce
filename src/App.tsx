@@ -12,6 +12,7 @@ import { CampaignListView } from './components/Campaigns/CampaignListView';
 import { LoyaltyClubView } from './components/Loyalty/LoyaltyClubView';
 import { CouponListView } from './components/Coupons/CouponListView';
 import { SupportTicketsView } from './components/Support/SupportTicketsView';
+import { SatisfactionSurveyView } from './components/Satisfaction/SatisfactionSurveyView';
 import { CommercialAIView } from './components/CommercialAI/CommercialAIView';
 import { LGPDComplianceView } from './components/LGPD/LGPDComplianceView';
 import { SettingsView } from './components/Settings/SettingsView';
@@ -123,6 +124,8 @@ const MainLayout: React.FC = () => {
         return <CouponListView />;
       case 'support':
         return <SupportTicketsView />;
+      case 'satisfaction':
+        return <SatisfactionSurveyView />;
       case 'ai':
         return <CommercialAIView />;
       case 'lgpd':
